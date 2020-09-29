@@ -9,7 +9,7 @@ Googletrans is a **free** and **unlimited** Golang library that implemented Goog
 This uses the [Google Translate Ajax API from Chrome extensions](https://chrome.google.com/webstore/detail/google-translate/aapbdbdomjkkjkaonfhkkikfgjllcleb) to make calls to such methods as detect and translate.
 
 ## Download from Github
-```sh
+```shell script
 GO111MODULE=on go get github.com/Conight/go-googletrans
 ```
 
@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	t := translate.New()
+	t := translator.New()
 	result, err := t.Translate("你好，世界！", "auto", "en")
 	if err != nil {
 		panic(err)
@@ -36,7 +36,7 @@ func main() {
 
 ### Using proxy
 ```go
-c := translate.Config{
+c := translator.Config{
     Proxy: "http://PROXY_HOST:PROXY_PORT",
 }
 t := translate.New(c)
@@ -44,7 +44,7 @@ t := translate.New(c)
 
 ### Using custom service urls or user agent
 ```go
-c := translate.Config{
+c := translator.Config{
     UserAgent: []string{"Custom Agent"},
     ServiceUrls: []string{"translate.google.com.hk"},
 }

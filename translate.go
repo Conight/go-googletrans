@@ -1,4 +1,4 @@
-package translate
+package translator
 
 import (
 	"crypto/tls"
@@ -47,23 +47,23 @@ func randomChoose(slice []string) string {
 	return slice[rand.Intn(len(slice))]
 }
 
-type AddHeaderTransport struct {
+type addHeaderTransport struct {
 	T              http.RoundTripper
 	defaultHeaders map[string]string
 }
 
-func (adt *AddHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (adt *addHeaderTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	for k, v := range adt.defaultHeaders {
 		req.Header.Add(k, v)
 	}
 	return adt.T.RoundTrip(req)
 }
 
-func NewAddHeaderTransport(T http.RoundTripper, defaultHeaders map[string]string) *AddHeaderTransport {
+func newAddHeaderTransport(T http.RoundTripper, defaultHeaders map[string]string) *addHeaderTransport {
 	if T == nil {
 		T = http.DefaultTransport
 	}
-	return &AddHeaderTransport{T, defaultHeaders}
+	return &addHeaderTransport{T, defaultHeaders}
 }
 
 func New(config ...Config) *translator {
@@ -94,7 +94,7 @@ func New(config ...Config) *translator {
 
 	// new client with custom headers
 	client := &http.Client{
-		Transport: NewAddHeaderTransport(transport, map[string]string{
+		Transport: newAddHeaderTransport(transport, map[string]string{
 			"User-Agent": userAgent,
 		}),
 	}
