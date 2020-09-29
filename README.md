@@ -1,5 +1,6 @@
 # Googletrans
 
+[![Sourcegraph](https://sourcegraph.com/github.com/Conight/go-googletrans/-/badge.svg)](https://sourcegraph.com/github.com/Conight/go-googletrans?badge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Conight/go-googletrans/blob/master/LICENSE)
 
 This is Golang version of [py-googletrans](https://github.com/ssut/py-googletrans).
