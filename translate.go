@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Config
+// Config basic config.
 type Config struct {
 	ServiceUrls []string
 	UserAgent   []string
@@ -107,7 +107,7 @@ func New(config ...Config) *translator {
 	}
 }
 
-// Translate translate given content.
+// Translate given content.
 // Set src to `auto` and system will attempt to identify the source language automatically.
 func (a *translator) Translate(origin, src, dest string) (*translated, error) {
 	// check src & dest
