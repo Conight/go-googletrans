@@ -2,7 +2,7 @@ package translator
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"regexp"
@@ -53,7 +53,7 @@ func (a *tokenAcquirer) update() error {
 		return err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
