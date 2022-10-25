@@ -120,7 +120,7 @@ func (a *translator) Translate(origin, src, dest string) (*translated, error) {
 		return nil, fmt.Errorf("dest language code error")
 	}
 
-	text, err := a.translate(origin, src, dest)
+	text, err := a.translate(a.client, origin, src, dest)
 	if err != nil {
 		return nil, err
 	}
@@ -133,14 +133,11 @@ func (a *translator) Translate(origin, src, dest string) (*translated, error) {
 	return result, nil
 }
 
-func (a *translator) translate(origin, src, dest string) (string, error) {
+func (a *translator) translate(client *http.Client, origin, src, dest string) (string, error) {
 	tk, err := a.ta.do(origin)
 	if err != nil {
 		return "", err
 	}
-
-	// build request
-	client := &http.Client{}
 
 	tranUrl := fmt.Sprintf("https://%s/translate_a/single", a.host)
 	req, err := http.NewRequest("GET", tranUrl, nil)
@@ -183,7 +180,7 @@ func (a *translator) translate(origin, src, dest string) (string, error) {
 		}
 		return translated, nil
 	} else {
-		return "", fmt.Errorf("request error")
+		return "", fmt.Errorf("expected statusCode 200, got: %d; resp: %+v", resp.StatusCode, resp)
 	}
 }
 
