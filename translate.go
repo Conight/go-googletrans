@@ -19,8 +19,8 @@ type Config struct {
 	Proxy       string
 }
 
-// translated result object.
-type translated struct {
+// Translated result object.
+type Translated struct {
 	Src    string // source language
 	Dest   string // destination language
 	Origin string // original text
@@ -37,7 +37,7 @@ type sentence struct {
 	Backend int    `json:"backend"`
 }
 
-type translator struct {
+type Translator struct {
 	host   string
 	client *http.Client
 	ta     *tokenAcquirer
@@ -66,7 +66,7 @@ func newAddHeaderTransport(T http.RoundTripper, defaultHeaders map[string]string
 	return &addHeaderTransport{T, defaultHeaders}
 }
 
-func New(config ...Config) *translator {
+func New(config ...Config) *Translator {
 	rand.Seed(time.Now().Unix())
 	var c Config
 	if len(config) > 0 {
@@ -100,7 +100,7 @@ func New(config ...Config) *translator {
 	}
 
 	ta := Token(host, client)
-	return &translator{
+	return &Translator{
 		host:   host,
 		client: client,
 		ta:     ta,
@@ -109,22 +109,22 @@ func New(config ...Config) *translator {
 
 // Translate given content.
 // Set src to `auto` and system will attempt to identify the source language automatically.
-func (a *translator) Translate(origin, src, dest string) (*translated, error) {
+func (a *Translator) Translate(origin, src, dest string) (*Translated, error) {
 	// check src & dest
 	src = strings.ToLower(src)
 	dest = strings.ToLower(dest)
-	if _, ok := languages[src]; !ok {
-		return nil, fmt.Errorf("src language code error")
-	}
-	if val, ok := languages[dest]; !ok || val == "auto" {
-		return nil, fmt.Errorf("dest language code error")
-	}
+	//if _, ok := languages[src]; !ok {
+	//	return nil, fmt.Errorf("src language code error")
+	//}
+	//if val, ok := languages[dest]; !ok || val == "auto" {
+	//	return nil, fmt.Errorf("dest language code error")
+	//}
 
 	text, err := a.translate(a.client, origin, src, dest)
 	if err != nil {
 		return nil, err
 	}
-	result := &translated{
+	result := &Translated{
 		Src:    src,
 		Dest:   dest,
 		Origin: origin,
@@ -133,7 +133,7 @@ func (a *translator) Translate(origin, src, dest string) (*translated, error) {
 	return result, nil
 }
 
-func (a *translator) translate(client *http.Client, origin, src, dest string) (string, error) {
+func (a *Translator) translate(client *http.Client, origin, src, dest string) (string, error) {
 	tk, err := a.ta.do(origin)
 	if err != nil {
 		return "", err
