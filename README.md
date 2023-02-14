@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="https://socialify.git.ci/Conight/go-googletrans/image?description=1&font=Inter&forks=1&language=1&logo=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fd%2Fd7%2FGoogle_Translate_logo.svg&name=1&owner=1&pattern=Floating%20Cogs&stargazers=1&theme=Auto" alt="go-googletrans" width="640" height="320" />
+</div>
+
 # Googletrans
 
 [![Sourcegraph](https://sourcegraph.com/github.com/Conight/go-googletrans/-/badge.svg)](https://sourcegraph.com/github.com/Conight/go-googletrans?badge)
