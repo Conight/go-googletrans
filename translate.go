@@ -85,11 +85,12 @@ func New(config ...Config) *Translator {
 	proxy := c.Proxy
 
 	transport := &http.Transport{}
+	// Skip verifies the server's certificate chain and host name.
+	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // skip verify
 	// set proxy
 	if strings.HasPrefix(proxy, "http") {
 		proxyUrl, _ := url.Parse(proxy)
-		transport.Proxy = http.ProxyURL(proxyUrl)                         // set proxy
-		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // skip verify
+		transport.Proxy = http.ProxyURL(proxyUrl) // set proxy
 	}
 
 	// new client with custom headers
