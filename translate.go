@@ -87,8 +87,8 @@ func New(config ...Config) *Translator {
 	transport := &http.Transport{}
 	// Skip verifies the server's certificate chain and host name.
 	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} // skip verify
-	// set proxy
-	if strings.HasPrefix(proxy, "http") {
+	// Check & set proxy
+	if strings.HasPrefix(proxy, "http") || strings.HasPrefix(proxy, "socks") {
 		proxyUrl, _ := url.Parse(proxy)
 		transport.Proxy = http.ProxyURL(proxyUrl) // set proxy
 	}
