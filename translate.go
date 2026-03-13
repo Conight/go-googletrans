@@ -29,6 +29,7 @@ type Translated struct {
 
 type sentences struct {
 	Sentences []sentence `json:"sentences"`
+	Src       string     `json:"src"`
 }
 
 type sentence struct {
@@ -111,39 +112,38 @@ func New(config ...Config) *Translator {
 // Translate given content.
 // Set src to `auto` and system will attempt to identify the source language automatically.
 func (a *Translator) Translate(origin, src, dest string) (*Translated, error) {
-	// check src & dest
 	src = strings.ToLower(src)
 	dest = strings.ToLower(dest)
-	//if _, ok := languages[src]; !ok {
-	//	return nil, fmt.Errorf("src language code error")
-	//}
-	//if val, ok := languages[dest]; !ok || val == "auto" {
-	//	return nil, fmt.Errorf("dest language code error")
-	//}
 
 	text, err := a.translate(a.client, origin, src, dest)
 	if err != nil {
 		return nil, err
 	}
 	result := &Translated{
-		Src:    src,
+		Src:    text.src,
 		Dest:   dest,
 		Origin: origin,
-		Text:   text,
+		Text:   text.translated,
 	}
 	return result, nil
 }
 
-func (a *Translator) translate(client *http.Client, origin, src, dest string) (string, error) {
+type translationResult struct {
+	translated string
+	src        string
+	dest       string
+}
+
+func (a *Translator) translate(client *http.Client, origin, src, dest string) (*translationResult, error) {
 	tk, err := a.ta.do(origin)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	tranUrl := fmt.Sprintf("https://%s/translate_a/single", a.host)
 	req, err := http.NewRequest("GET", tranUrl, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	q := req.URL.Query()
 	// params from chrome translate extension
@@ -160,18 +160,18 @@ func (a *Translator) translate(client *http.Client, origin, src, dest string) (s
 	// do request
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == 200 {
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		var sentences sentences
 		err = json.Unmarshal(body, &sentences)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		translated := ""
@@ -179,9 +179,13 @@ func (a *Translator) translate(client *http.Client, origin, src, dest string) (s
 		for _, s := range sentences.Sentences {
 			translated += s.Trans
 		}
-		return translated, nil
+		return &translationResult{
+			translated: translated,
+			src:        sentences.Src,
+			dest:       dest,
+		}, nil
 	} else {
-		return "", fmt.Errorf("expected statusCode 200, got: %d; resp: %+v", resp.StatusCode, resp)
+		return nil, fmt.Errorf("expected statusCode 200, got: %d; resp: %+v", resp.StatusCode, resp)
 	}
 }
 
